@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright DroidVM contributors
-// Additional permissions apply; see ADDITIONAL-PERMISSIONS in the repository root.
-package cn.classfun.droidvm.ui.main;
-
+// Copyright DroidVM contributors                 // Additional permissions apply; see ADDITIONAL-PERMISSIONS in the repository root.
+package cn.classfun.droidvm.ui.main;              
 import static android.content.Intent.ACTION_VIEW;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static java.util.Objects.requireNonNull;
-import static cn.classfun.droidvm.lib.Constants.GITHUB_ISSUE_URL;
-import static cn.classfun.droidvm.lib.utils.ThreadUtils.runOnPool;
-
-import android.content.Intent;
+import static cn.classfun.droidvm.lib.Constants.GITHUB_ISSUE_URL;                                   import static cn.classfun.droidvm.lib.utils.ThreadUtils.runOnPool;
+                                                  import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -228,14 +224,14 @@ public final class MainActivity extends SwipeableTabActivity {
         if (isSwipeSwitching) return true;
         if (id != activeFragment) {
             var oldFrag = getFragment(activeFragment);
+            int direction = Integer.compare(id.ordinal(), activeFragment.ordinal());
             activeFragment = id;
-            fm.beginTransaction()
-                .hide(oldFrag)
-                .show(target)
-                .commitNow();
-            if (swipeHelper != null) {
-                swipeHelper.setTabImmediate(activeFragment.ordinal());
-            }
+            swipeHelper.animateToTab(id.ordinal(), direction, () ->
+                fm.beginTransaction()
+                    .hide(oldFrag)
+                    .show(target)
+                    .commitNow()
+            );
         }
         return true;
     }
