@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".ui.main.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -43,9 +42,10 @@
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        app:layout_anchor="@id/bottom_nav"
+        app:layout_anchorGravity="top|end"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="104dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="@string/fab_add_desc"
         android:src="@drawable/ic_add"
         app:fabSize="normal"
@@ -58,6 +58,6 @@
         android:layout_gravity="bottom"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_main_bottom_nav"
-        tools:ignore="VisualLintBottomNav"/>
+        tools:ignore="VisualLintBottomNav" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
