@@ -57,7 +57,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:labelVisibilityMode="labeled"
+        app:paddingBottomSystemWindowInsets="false"
         app:menu="@menu/menu_main_bottom_nav"
-        tools:ignore="VisualLintBottomNav" />
+        tools:ignore="VisualLintBottomNav"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
