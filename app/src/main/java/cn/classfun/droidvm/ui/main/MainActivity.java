@@ -23,7 +23,9 @@ import android.widget.LinearLayout;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -175,6 +177,43 @@ public final class MainActivity extends SwipeableTabActivity {
         findViewById(R.id.main_container).post(() ->
             swipeHelper.setTabImmediate(activeFragment.ordinal())
         );
+
+        var coordinator = findViewById(R.id.main_coordinator);
+        if (coordinator == null) coordinator = (View) bottomNav.getParent();
+        if (coordinator != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(coordinator, (v, windowInsets) -> {
+                var insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+                float density = getResources().getDisplayMetrics().density;
+                int baseNavHeight = (int) (80 * density);
+
+                bottomNav.setPadding(insets.left, 0, insets.right, insets.bottom);
+
+                var container = findViewById(R.id.main_container);
+                if (container != null) {
+                    var containerLp = (CoordinatorLayout.LayoutParams) container.getLayoutParams();
+                    if (containerLp != null) {
+                        containerLp.bottomMargin = baseNavHeight + insets.bottom;
+                        containerLp.leftMargin = insets.left;
+                        containerLp.rightMargin = insets.right;
+                        container.setLayoutParams(containerLp);
+                    }
+                }
+
+                if (fab != null) {
+                    var fabLp = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                    if (fabLp != null) {
+                        fabLp.bottomMargin = (int) (104 * density) + insets.bottom;
+                        fabLp.rightMargin = (int) (24 * density) + insets.right;
+                        fab.setLayoutParams(fabLp);
+                    }
+                }
+
+                ViewCompat.dispatchApplyWindowInsets(appBarLayout, windowInsets);
+                return windowInsets;
+            });
+            ViewCompat.requestApplyInsets(coordinator);
+        }
+
         if (showTestBuildWarning())
             launchDaemon();
     }
@@ -189,14 +228,14 @@ public final class MainActivity extends SwipeableTabActivity {
         if (isSwipeSwitching) return true;
         if (id != activeFragment) {
             var oldFrag = getFragment(activeFragment);
-            int direction = Integer.compare(id.ordinal(), activeFragment.ordinal());
             activeFragment = id;
-            swipeHelper.animateToTab(id.ordinal(), direction, () ->
-                fm.beginTransaction()
-                    .hide(oldFrag)
-                    .show(target)
-                    .commitNow()
-            );
+            fm.beginTransaction()
+                .hide(oldFrag)
+                .show(target)
+                .commitNow();
+            if (swipeHelper != null) {
+                swipeHelper.setTabImmediate(activeFragment.ordinal());
+            }
         }
         return true;
     }
